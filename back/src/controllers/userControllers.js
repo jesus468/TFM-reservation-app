@@ -1,0 +1,254 @@
+const {
+    getAllUsers,
+    createUser,
+    foundByEmail,
+    deleteUser,
+    createReservation,
+    deleteReservation
+} = require('../services/userServices');
+
+const {
+    createUserValidation,
+    loginValidation,
+    deleteUserValidation,
+} = require('../validations/userValidation');
+
+const {
+    createReserveValidation,
+    deleteReserveValidation
+} = require('../validations/reservValidation');
+const handleValidation = require('../middlewares/validationResult'); 
+const bcrypt = require('bcrypt');
+
+const userController = {
+    getUsers : [
+        async (req , res, next) => {
+            try {
+                const data = await getAllUsers();
+
+                res.status(200).json({success : 'OK', Users: data});
+            } catch (error) {
+                console.error('there was an error in get Users', error);
+                next(error);
+            }finally{
+                console.log('get Users finalized');
+            }
+        }
+    ],
+    newUser : [
+        ...createUserValidation,
+        handleValidation,
+
+        async (req , res, next) => {
+            const userData = req.body;
+            const {email} = req.body;
+
+            try {
+
+                if(!validatePassword(userData.password)){
+                    throw new Error('Password Invalid');
+                }
+
+                const allUsers = await getAllUsers();
+                const allUsersEmail = allUsers.map(el => el.email);
+
+                let usedEmail = false;
+
+                for(const el of allUsersEmail){
+                    const emailRequestHashed = await bcrypt.compare(email, el);
+                    if(emailRequestHashed){
+                        usedEmail=true;
+                    }
+                }
+
+                if(!usedEmail){    
+                    const data = await createUser(userData);
+                    res.status(200).json({success : 'OK', userCreated: data});
+                }else{
+                    throw new Error('Email already used');
+                }
+                
+            } catch (error) {
+                console.error('there was an error adding new user (controller)', error.message);
+                next(error);
+            }finally{
+                console.log('new user controller finalized');
+            }
+        }
+    ],
+    removeUser :[
+        ...deleteUserValidation,
+        handleValidation,
+        async(req, res, next) => {
+            const email = req.params;
+            try {
+
+                const allUsersEmail = await alluser(email);
+                
+                console.log(allUsersEmail);
+
+                if(!allUsersEmail.length>0){
+                    throw new Error('Email to Delete not found');
+                }
+
+                const dele = await deleteUser(allUsersEmail[0]);
+                console.log('dele : ', dele);
+                res.status(200).json({success:'OK', message:`user deleted`});
+            } catch (error) {
+                console.error('there was an error deleting a user (controller)', error.message);
+                next(error);
+            }finally{
+                console.log('Delete user finalized');
+            }
+        }
+    ],
+    login: [
+        ...loginValidation,
+        handleValidation,
+        async (req, res, next) => {
+            const {email , password} = req.body;
+            try {
+                const matchedEmail = await foundByEmail(email);
+
+                if(!matchedEmail){
+                    throw new Error('Email not found');
+                }
+
+                const passwordValidate = await bcrypt.compare(password ,matchedEmail.password);
+                
+                console.log('passwordValidate : ', passwordValidate);
+
+                if(!passwordValidate){
+                    throw new Error ('Wrong password');
+                }
+
+                res.status(200).json({success:'OK', message:'successfully logged in'});
+
+            } catch (error) {
+                console.error('there was an error login (controller)', error.message);
+                next(error);
+            }finally{
+                console.log('login controller finalized');
+            }
+        }
+
+    ],
+    newReservation :[
+        ...createReserveValidation,
+        handleValidation,
+
+        async(req, res, next) => {
+
+            const {diners, deposit, date} = req.body;
+            /*
+            aqui tengo que recibir el usuario (probablemente su ID) o lo localizo con el email
+            
+                aunque, el nombre, de la reserva, lo obtendre del login,
+
+            una vez que tengo el usuario, añado la reserva a su array de reservas
+            */
+            
+
+            try {
+
+                const user = await(foundByEmail('luismi@gmail.com'));
+                const created = await createReservation(user, req.body);
+                console.log('created del controller :' ,created);
+
+                if(!created){
+                    console.log('el if del controler---------');
+                    throw new Error('Cant add reservation');
+                }
+
+                res.status(200).json({success:'OK', message: 'Reservation created'});
+
+            } catch (error) {
+                console.error('there was an error in new Reservation (controller)', error.message);
+                next(error);
+            }finally{
+                console.log('new reservation controller finalized');
+            }
+        }
+    ],
+    removeReservation : [
+        ...deleteReserveValidation,
+        handleValidation,
+
+        async (req, res , next) => {
+            const {id} = req.params;
+
+            /*
+                aqui debo obtener el correo desde el login
+            */
+            
+            try {
+                console.log('id del controller' ,id);
+
+                const user = await(foundByEmail('luismi@gmail.com'));
+                console.log('este es el user :',user);
+
+                if(!user){
+                    throw new Error('Email dont found');
+                }
+
+                if(user.reservation.length<=0){
+                    throw new Error('There are no reservations');
+                }
+
+                const deletingReservation = await deleteReservation(user, id);
+                console.log('deleting reservacion controller: ', deletingReservation);
+
+                if(!deletingReservation){
+                    throw new Error('Error deleting Reserve');
+                }
+
+                res.status(200).json({success:'OK', message: deletingReservation});
+            } 
+            catch (error) {
+                console.error('there was an error in delete Reservation (controller)', error.message);
+                next(error);
+            }finally{
+                console.log('delete reservation controller finalized');
+            }
+        }
+    ]
+}
+
+const validatePassword = (passwordAttemp) => {
+    const bad = [];
+
+    if(!/[a-zA-Z]/.test(passwordAttemp)) bad.push('Need at lest a letter'); 
+    if(!/\d/.test(passwordAttemp)) bad.push('Need at less a number');
+    if(!/[!@#$%^&*(),.?":{}|<>]/.test(passwordAttemp)) bad.push('Need at less a Special character');
+    if(passwordAttemp.length<8) bad.push('Password cant have less than 8 characters');
+
+    if(bad.length===0){
+        return true;
+    }else{
+        const validateError = new Error('Invalid password');
+        validateError.message = 'Password Invalid';
+        validateError.data = bad;
+
+        throw validateError;
+    }
+}
+const alluser = async (email) => {
+    const allUsers = await getAllUsers();
+    const allUsersEmail = allUsers.map(el => el.email);
+
+    let usedEmail = [];
+
+    for(const el of allUsersEmail){
+
+        console.log('estos son los el: ',el)
+        console.log('y este el email del request: ',email.email);
+
+        const emailRequestHashed = await bcrypt.compare(email.email, el);
+        if(emailRequestHashed){
+            usedEmail.push(el);
+        }
+    }
+
+    return usedEmail;
+}
+module.exports = userController;
