@@ -122,6 +122,45 @@ const deleteReservation = async (user, reservId) => {
         console.log('deleteReservation finalized (services)');
     }
 }
+const modifyReservation = async (user ,reserveNewData, reserveId) => {
+    try {
+        if(!reserveNewData){
+            throw new Error('there are no data to update in services');
+        }
+
+        if(!reserveId){
+            throw new Error('there are no id for update in services');
+        }
+
+        if(!user){
+            throw new Error('there are no an user for update in services');
+        }
+/*
+        console.log('user: ', user);
+        console.log('reserveID: ', reserveId);
+*/
+        const reserveToUpdate = user.reservation.filter(el => el._id.toString() !== reserveId);
+        /*
+        console.log('reserveToUpdate: ' ,reserveToUpdate);
+*/
+        
+
+        reserveToUpdate.push(reserveNewData);
+        //console.log('reserveToUpdate: con el nuevo update' ,reserveToUpdate);
+
+        const toUpdate = {
+            reservation : reserveToUpdate
+        }
+
+        const updated = User.findOneAndUpdate({email : user.email}, toUpdate);
+        return updated;
+
+    } catch (error) {
+       console.log('Error in modify Reservation services:', error);
+    }finally{
+        console.log('modifyReservation finalized (services)');
+    }
+}
 
 
 
@@ -154,5 +193,6 @@ module.exports = {
     foundByEmail,
     deleteUser,
     createReservation,
-    deleteReservation
+    deleteReservation,
+    modifyReservation
 };

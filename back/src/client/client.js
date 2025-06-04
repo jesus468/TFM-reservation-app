@@ -14,6 +14,14 @@ const nuevaReserva = {
     plates : []
 }
 
+const modificiarReserva = { //esto tendra que hacerlo el admin
+    name: 'por que?',
+    diners: 1,
+    deposit: 0,
+    date: new Date('2025-06-11'),
+    plates : ['rico']
+}
+
 const tryLogin = {
     email: 'luismi@gmail.com',
     password : '!sdddd4dd'
@@ -190,9 +198,45 @@ const deleteReserve = async (idToDelete) => {
         console.log('delete reserve fecht finalized');
     }
 }
+const modifyReserve = async (toModifyData, toModifyId) => {
+    try {
+        const response = await fetch(`http://localhost:3000/api/reservation/modify/${toModifyId}`, {
+            method: 'POST',
+            headers : {
+                'Content-Type': 'application/json'
+            },
+            body : JSON.stringify(toModifyData)
+        });
+        const data = await response.json();
+
+        if(data.status===404){
+            console.log('Pagina no encontrada - (FETCH)');
+        }
+
+        if(data.success==='OK'){
+            console.log(`La reserva ${toModifyId} fue modificada correctamente`);
+        }else{
+            if(data.message==='Reserve to Delete not found'){
+                console.log('Esta Id no está en las reservas');
+            }else 
+            if(data.message==='User not found'){
+                console.log('Usuario no encontrado');
+            }else{
+                console.log('Hubo un error, en alguna parte del proceso :p');
+            }
+        }
+        //console.log(data);
+    } catch (error) {
+        console.log('there was an error in modify reserve fetch', error);
+    }finally{
+        console.log('modify reserve fecht finalized');
+    }
+}
+
 //addUser(nuevoUsuario);
 //getUsers();
 //login(tryLogin);
 //deleteUser('carlos@yahoo.com');
 //crearReserva(nuevaReserva);
-deleteReserve('683c873e2dc61fe7fb27da1b')
+//deleteReserve('683c873e2dc61fe7fb27da1b')
+modifyReserve(modificiarReserva, '683e1d6b5348e8722816bd5e') //se debe enviar tambien la ID de la reserva, esto lo manda el admin al seleccionar la reserva que quiere modificar 

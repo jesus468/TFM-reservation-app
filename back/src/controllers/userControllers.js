@@ -4,7 +4,8 @@ const {
     foundByEmail,
     deleteUser,
     createReservation,
-    deleteReservation
+    deleteReservation,
+    modifyReservation
 } = require('../services/userServices');
 
 const {
@@ -209,6 +210,44 @@ const userController = {
                 next(error);
             }finally{
                 console.log('delete reservation controller finalized');
+            }
+        }
+    ],
+    modifyReservation : [
+        ...createReserveValidation,
+        handleValidation,
+
+        async (req, res ,next) => {
+            const {name, diners, deposit, plates, date} = req.body;
+            const {id} = req.params;
+/*
+            console.log('reserveId del controller:', id);
+            console.log('datos llegando al req, controller: ', datosllegando);
+           */ try {
+                const user = await(foundByEmail('luismi@gmail.com'));
+                console.log('este es el user :',user);
+
+                if(!user){
+                    throw new Error('User not found');
+                }
+
+                const toUpdateReserv = {
+                    name: name,
+                    diners: diners,
+                    deposit: deposit,
+                    plates: plates,
+                    date: date,
+                }
+
+                const updated = await modifyReservation(user, toUpdateReserv, id);
+
+                res.status(200).json({success:'OK', message: updated});
+
+            } catch (error) {
+                console.error('there was an error in modify Reservation (controller)', error.message);
+                next(error);
+            }finally{
+                console.log('modify reservation controller finalized');
             }
         }
     ]
