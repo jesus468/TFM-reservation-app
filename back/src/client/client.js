@@ -1,3 +1,10 @@
+let respuesta = require('dotenv').config({path: '../../.env'});
+
+console.log(respuesta, 'mmmm')
+
+const apiURL = process.env.API_URL || `http://${process.env.DB_HOST}:${process.env.DB_PORT}` 
+console.log(apiURL, 'user');
+
 const nuevoUsuario = {
     name: 'luis',
     secondName : 'miguel',
@@ -5,7 +12,6 @@ const nuevoUsuario = {
     email : 'luismi@gmail.com',
     password : '!sdddd4dd'
 }
-
 const nuevaReserva = {
     name: 'dos ejemplo',
     diners: 3,
@@ -13,7 +19,6 @@ const nuevaReserva = {
     date: new Date('2025-06-15'),
     plates : []
 }
-
 const modificiarReserva = { //esto tendra que hacerlo el admin
     name: 'por que?',
     diners: 1,
@@ -21,16 +26,13 @@ const modificiarReserva = { //esto tendra que hacerlo el admin
     date: new Date('2025-06-11'),
     plates : ['rico']
 }
-
 const tryLogin = {
     email: 'luismi@gmail.com',
     password : '!sdddd4dd'
 }
-
-
 const addUser = async (datosDelUsuario) => {
     try {
-        const response = await fetch('http://localhost:3000/api/newUser', {
+        const response = await fetch(`${apiURL}/api/newUser`, {
             method: 'POST',
             headers : {
                 'Content-Type': 'application/json'
@@ -65,10 +67,11 @@ const addUser = async (datosDelUsuario) => {
         console.error('there was an error trying add user, fetch ', error);
     }
 }
-
 const getUsers = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/getAllUser');
+        const response = await fetch(`${apiURL}/api/getAllUser`, {
+            method : 'GET'
+        });
         const data = await response.json();
 
         console.log(data);
@@ -76,14 +79,14 @@ const getUsers = async () => {
         console.error('there was an error in getUsers fetch', error);
     }
 }
-
 const login = async (tryLogin) => {
     try {
-        const response = await fetch('http://localhost:3000/api/login', {
+        const response = await fetch(`${apiURL}/api/login`, {
             method: 'POST',
             headers : {
                 'Content-Type': 'application/json'
             },
+            withCredential: true,
             body : JSON.stringify(tryLogin)
         });
         data = await response.json();
@@ -92,6 +95,7 @@ const login = async (tryLogin) => {
 
         if(data.success==='OK'){
             console.log('/-- usuario logeado con exito --/');
+            console.log()
         }else{
             if(data.message==='Wrong password'){
                 console.log('contraseña incorrecta');
@@ -112,10 +116,9 @@ const login = async (tryLogin) => {
         console.log('login fetch finalized');
     }
 }
-
 const deleteUser = async (toDeleteEmail) => {
     try {
-        response = await fetch(`http://localhost:3000/api/deleteUser/${toDeleteEmail}`, {
+        response = await fetch(`${apiURL}/api/deleteUser/${toDeleteEmail}`, {
             method : 'DELETE'
         });
         data = await response.json();
@@ -138,10 +141,9 @@ const deleteUser = async (toDeleteEmail) => {
         console.log('delete user fect finalized');
     }
 }
-
 const crearReserva = async (datosDelaReserva) => {
     try {
-        const response = await fetch('http://localhost:3000/api/reservation/new', {
+        const response = await fetch(`${apiURL}/api/reservation/new`, {
             method: 'POST',
             headers : {
                 'Content-Type': 'application/json'
@@ -169,10 +171,9 @@ const crearReserva = async (datosDelaReserva) => {
         console.error('there was an error trying add reservation, fetch ', error);
     }
 }
-
 const deleteReserve = async (idToDelete) => {
     try {
-        response = await fetch(`http://localhost:3000/api/reservation/delete/${idToDelete}`, {
+        response = await fetch(`${apiURL}/api/reservation/delete/${idToDelete}`, {
             method : 'DELETE'
         });
         data = await response.json();
@@ -200,7 +201,7 @@ const deleteReserve = async (idToDelete) => {
 }
 const modifyReserve = async (toModifyData, toModifyId) => {
     try {
-        const response = await fetch(`http://localhost:3000/api/reservation/modify/${toModifyId}`, {
+        const response = await fetch(`${apiURL}/api/reservation/modify/${toModifyId}`, {
             method: 'POST',
             headers : {
                 'Content-Type': 'application/json'
@@ -235,8 +236,8 @@ const modifyReserve = async (toModifyData, toModifyId) => {
 
 //addUser(nuevoUsuario);
 //getUsers();
-//login(tryLogin);
-//deleteUser('carlos@yahoo.com');
+login(tryLogin);
+//deleteUser('perezAngel@gmail.com');
 //crearReserva(nuevaReserva);
 //deleteReserve('683c873e2dc61fe7fb27da1b')
-modifyReserve(modificiarReserva, '683e1d6b5348e8722816bd5e') //se debe enviar tambien la ID de la reserva, esto lo manda el admin al seleccionar la reserva que quiere modificar 
+//modifyReserve(modificiarReserva, '683e1d6b5348e8722816bd5e') //se debe enviar tambien la ID de la reserva, esto lo manda el admin al seleccionar la reserva que quiere modificar 

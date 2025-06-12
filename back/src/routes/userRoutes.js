@@ -1,18 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userControllers');
+const mongoSanitize = require('../middlewares/mongoSanitize');
+const authValidation = require('../middlewares/authValidation');
 
 
+router.get('/getAllUser',mongoSanitize,  userController.getUsers);
+router.delete('/deleteUser/:email', mongoSanitize,  authValidation, userController.removeUser);
+router.post('/newUser', mongoSanitize, userController.newUser);
 
-router.get('/getAllUser', userController.getUsers);
-router.delete('/deleteUser/:email',  /*validate that rol is not client,*/ userController.removeUser);
-router.post('/newUser', userController.newUser);
+router.post('/login', mongoSanitize, userController.login);
 
-router.post('/login', userController.login);
-
-router.post('/reservation/new', /*validate that is logged ,*/ userController.newReservation);
-router.delete('/reservation/delete/:id', /*validate that is logged ,*/ userController.removeReservation );
-router.post('/reservation/modify/:id', /*validate that this is admin,*/ userController.modifyReservation)
+router.post('/reservation/new', mongoSanitize, /*validate that is logged ,*/ userController.newReservation);
+router.delete('/reservation/delete/:id', mongoSanitize, /*validate that is logged ,*/ userController.removeReservation );
+router.post('/reservation/modify/:id', mongoSanitize, authValidation, userController.modifyReservation)
 
 
 /*

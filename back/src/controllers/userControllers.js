@@ -19,6 +19,7 @@ const {
     deleteReserveValidation
 } = require('../validations/reservValidation');
 const handleValidation = require('../middlewares/validationResult'); 
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const userController = {
@@ -122,6 +123,23 @@ const userController = {
                 if(!passwordValidate){
                     throw new Error ('Wrong password');
                 }
+
+                //crear la cookie
+                //subir la cookie
+                const token = jwt.sign(
+                    {userId: matchedEmail._id ,
+                    role: matchedEmail.role,
+                    name: matchedEmail.name
+                }, process.env.SECRET_JWT_KEY, {expiresIn : '2h'});
+
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: false , //poner a true en deploy
+                    sameSite: 'Lax',
+                    path: '/',
+                    //domain: 
+                    maxAge: 2 * 60* 60 * 1000
+                })
 
                 res.status(200).json({success:'OK', message:'successfully logged in'});
 

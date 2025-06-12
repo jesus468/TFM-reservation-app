@@ -1,15 +1,24 @@
 const express = require('express');
-const app = express();
-const userRoutes = require('./routes/userRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const notFoundHandler = require('./middlewares/notFoundHandler');
-/*
-    blindar el app
-*/
+const helmet = require('helmet');
+const cors = require('cors');
+const mongoSanitize = require('express-mongo-sanitize');
+const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 
+const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
+app.use(helmet())
+app.use(cors());
+
+const limiter = rateLimit({windowMs: 15 * 60 * 1000, max: 100 })
+app.use(limiter);
+
+const userRoutes = require('./routes/userRoutes');
 app.use('/api', userRoutes);
 
 app.use('/', notFoundHandler)
