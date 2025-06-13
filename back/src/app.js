@@ -23,10 +23,6 @@ app.use(helmet())
 const limiter = rateLimit({windowMs: 15 * 60 * 1000, max: 100 })
 app.use(limiter);
 
-app.options('*', cors({
-  origin: ['http://localhost:5173', 'https://tfm-reservation-app.onrender.com'],
-  credentials: true
-}));
 
 const userRoutes = require('./routes/userRoutes');
 app.use('/api', userRoutes);
