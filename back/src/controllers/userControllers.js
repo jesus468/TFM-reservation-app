@@ -140,7 +140,7 @@ const userController = {
 
                 res.cookie('token', token, {
                     httpOnly: true,
-                    secure: tr , //poner a true en deploy
+                    secure: false , //poner a true en deploy
                     sameSite: 'Lax',
                     path: '/',
                     //domain: 
@@ -150,7 +150,7 @@ const userController = {
                 if(token){
                     localStorage.setItem('liveSesion', true);
                 }else{
-                    localStorage.removeItem('liveSesion');
+                    localStorage.removeItem('liveSesion')
                 }
 
                 res.status(200).json({success:'OK', message:'successfully logged in'});
