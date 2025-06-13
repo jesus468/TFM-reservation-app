@@ -140,14 +140,20 @@ const userController = {
 
                 res.cookie('token', token, {
                     httpOnly: true,
-                    secure: false , //poner a true en deploy
+                    secure: tr , //poner a true en deploy
                     sameSite: 'Lax',
                     path: '/',
                     //domain: 
                     maxAge: 2 * 60* 60 * 1000
                 })
 
-                res.status(200).json({success:'OK', message:'successfully logged in', anotherData: {email: email, pass: password, req: req.body}});
+                if(token){
+                    localStorage.setItem('liveSesion', true);
+                }else{
+                    localStorage.removeItem('liveSesion');
+                }
+
+                res.status(200).json({success:'OK', message:'successfully logged in'});
 
             } catch (error) {
                 console.error('there was an error login (controller)', error.message);
