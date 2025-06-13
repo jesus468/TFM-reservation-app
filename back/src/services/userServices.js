@@ -65,7 +65,7 @@ const foundByEmail = async (emailUser) => {
     console.log('email user llegando al services: ',emailUser);
     try {
         //const hashedEmailUser = bcrypt.hash(emailUser, 10);
-        const emails = await User.find({}, 'email password reservation');
+        const emails = await User.find({}, 'email password reservation name');
         for(const el of emails){
             const match = await bcrypt.compare(emailUser, el.email);
             if(match){
