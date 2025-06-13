@@ -111,9 +111,10 @@ const userController = {
 
             const {email , password} = req.body;
             
-            console.log('request body: ', req.body);
-            console.log('email body: ', email);
-            console.log('password body: ', password);
+            if(!email || !password){
+                return res.status(400).json({ message: 'Email and password are required', data: {email:email, password: password} });
+            }
+
             try {
                 const matchedEmail = await foundByEmail(email);
 
@@ -146,7 +147,7 @@ const userController = {
                     maxAge: 2 * 60* 60 * 1000
                 })
 
-                res.status(200).json({success:'OK', message:'successfully logged in'});
+                res.status(200).json({success:'OK', message:'successfully logged in', anotherData: {email: email, pass: password, req: req.body}});
 
             } catch (error) {
                 console.error('there was an error login (controller)', error.message);
