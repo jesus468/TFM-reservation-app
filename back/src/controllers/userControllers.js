@@ -147,12 +147,6 @@ const userController = {
                     maxAge: 2 * 60* 60 * 1000
                 })
 
-                if(token){
-                    localStorage.setItem('liveSesion', true);
-                }else{
-                    localStorage.removeItem('liveSesion')
-                }
-
                 res.status(200).json({success:'OK', message:'successfully logged in'});
 
             } catch (error) {
