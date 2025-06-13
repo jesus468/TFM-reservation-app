@@ -108,7 +108,12 @@ const userController = {
         ...loginValidation,
         handleValidation,
         async (req, res, next) => {
+
             const {email , password} = req.body;
+            
+            console.log('request body: ', req.body);
+            console.log('email body: ', email);
+            console.log('password body: ', password);
             try {
                 const matchedEmail = await foundByEmail(email);
 
