@@ -9,14 +9,16 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-app.use(express.json());
-app.use(cookieParser());
-
-app.use(helmet())
 app.use(cors({
     origin: ['http://localhost:5173/', 'https://tfm-reservation-app.onrender.com'], 
     credentials: true 
 }));
+
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.use(helmet())
 
 const limiter = rateLimit({windowMs: 15 * 60 * 1000, max: 100 })
 app.use(limiter);
