@@ -3,14 +3,13 @@ const errorHandler = require('./middlewares/errorHandler');
 const notFoundHandler = require('./middlewares/notFoundHandler');
 const helmet = require('helmet');
 const cors = require('cors');
-const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:5173/', 'https://tfm-reservation-app.onrender.com'], 
+    origin: ['http://localhost:5173', 'https://tfm-reservation-app.onrender.com'], 
     credentials: true 
 }));
 
