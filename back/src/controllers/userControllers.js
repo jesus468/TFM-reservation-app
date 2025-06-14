@@ -158,6 +158,28 @@ const userController = {
         }
 
     ],
+    getAllReserveOf: [
+        async (req, res, next) =>{
+            const {email} = req.params;
+
+            if(!email){
+                return res.status(400).json({ message: 'Email is empty'});
+            }
+
+            try {
+                const userEmail = await foundByEmail(email);
+
+                if(!userEmail){
+                    return res.status(400).json({ message: 'Email not found'});
+                }
+
+                res.status(200).json({success : 'OK', user : userEmail.name , reserves : userEmail.reservation});
+            } catch (error) {
+                console.error('Error in get reserve', error);
+                next(error)
+            }
+        }
+    ],
     newReservation :[
         ...createReserveValidation,
         handleValidation,
