@@ -147,7 +147,7 @@ const userController = {
                     maxAge: 2 * 60* 60 * 1000
                 })
 
-                res.status(200).json({success:'OK', message:'successfully logged in', user: matchedEmail.name });
+                res.status(200).json({success:'OK', message:'successfully logged in', user: matchedEmail.name , id: matchedEmail._id});
 
             } catch (error) {
                 console.error('there was an error login (controller)', error.message);
