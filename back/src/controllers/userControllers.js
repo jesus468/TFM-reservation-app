@@ -141,7 +141,7 @@ const userController = {
                 res.cookie('token', token, {
                     httpOnly: true,
                     secure: false , //poner a true en deploy
-                    sameSite: 'Lax',
+                    sameSite: 'None',
                     path: '/',
                     //domain: 
                     maxAge: 2 * 60* 60 * 1000
