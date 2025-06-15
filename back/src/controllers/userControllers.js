@@ -140,7 +140,7 @@ const userController = {
 
                 res.cookie('token', token, {
                     httpOnly: true,
-                    secure: false , //poner a true en deploy
+                    secure: true ,
                     sameSite: 'None',
                     path: '/',
                     //domain: 
