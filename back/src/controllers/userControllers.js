@@ -187,11 +187,19 @@ const userController = {
         async(req, res, next) => {
 
             const {diners, deposit, date} = req.body;
-            const {email} = req.params;
+            const {id} = req.params;
+            /*
+            aqui tengo que recibir el usuario (probablemente su ID) o lo localizo con el email
+            
+                aunque, el nombre, de la reserva, lo obtendre del login,
+
+            una vez que tengo el usuario, añado la reserva a su array de reservas
+            */
+            
 
             try {
 
-                const user = await(foundByEmail(email));
+                const user = await(foundByEmail('luismi@gmail.com'));
                 const created = await createReservation(user, req.body);
                 console.log('created del controller :' ,created);
 
@@ -215,10 +223,15 @@ const userController = {
         handleValidation,
 
         async (req, res , next) => {
-            const {email} = req.params;
+            const {id} = req.params;
+            const {email} = req.body;
 
+            /*
+                aqui debo obtener el correo desde el login
+            */
+            
             try {
-                console.log('id del controller' ,email);
+                console.log('id del controller' ,id);
 
                 const user = await(foundByEmail(email));
                 console.log('este es el user :',user);
@@ -254,10 +267,12 @@ const userController = {
 
         async (req, res ,next) => {
             const {name, diners, deposit, plates, date} = req.body;
-            const {email} = req.params;
-            
-            try {
-                const user = await(foundByEmail(email));
+            const {id} = req.params;
+/*
+            console.log('reserveId del controller:', id);
+            console.log('datos llegando al req, controller: ', datosllegando);
+           */ try {
+                const user = await(foundByEmail('luismi@gmail.com'));
                 console.log('este es el user :',user);
 
                 if(!user){
