@@ -223,8 +223,7 @@ const userController = {
         handleValidation,
 
         async (req, res , next) => {
-            const {id} = req.params;
-            const {email} = req.body;
+            const {id , email} = req.params;
 
             /*
                 aqui debo obtener el correo desde el login
