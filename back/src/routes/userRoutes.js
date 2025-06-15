@@ -14,7 +14,7 @@ router.post('/login', mongoSanitize, userController.login);
 router.get('/getReserveOf/:email', mongoSanitize, userController.getAllReserveOf );
 router.post('/reservation/new/:email', mongoSanitize, /*validate that is logged ,*/ userController.newReservation);
 router.delete('/reservation/delete/:id/:email', mongoSanitize, /*validate that is logged ,*/ userController.removeReservation );
-router.post('/reservation/modify/:id', mongoSanitize, authValidation, userController.modifyReservation)
+router.post('/reservation/modify/:id/:email', mongoSanitize, authValidation, userController.modifyReservation)
 
 
 /*
