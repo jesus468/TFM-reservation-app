@@ -187,7 +187,7 @@ const userController = {
         async(req, res, next) => {
 
             const {diners, deposit, date} = req.body;
-            const {id} = req.params;
+            const {email} = req.params;
             /*
             aqui tengo que recibir el usuario (probablemente su ID) o lo localizo con el email
             
@@ -199,7 +199,7 @@ const userController = {
 
             try {
 
-                const user = await(foundByEmail('luismi@gmail.com'));
+                const user = await(foundByEmail(email));
                 const created = await createReservation(user, req.body);
                 console.log('created del controller :' ,created);
 
@@ -266,12 +266,12 @@ const userController = {
 
         async (req, res ,next) => {
             const {name, diners, deposit, plates, date} = req.body;
-            const {id} = req.params;
+            const {id, email} = req.params;
 /*
             console.log('reserveId del controller:', id);
             console.log('datos llegando al req, controller: ', datosllegando);
            */ try {
-                const user = await(foundByEmail('luismi@gmail.com'));
+                const user = await(foundByEmail(email));
                 console.log('este es el user :',user);
 
                 if(!user){
