@@ -188,14 +188,6 @@ const userController = {
 
             const {diners, deposit, date} = req.body;
             const {email} = req.params;
-            /*
-            aqui tengo que recibir el usuario (probablemente su ID) o lo localizo con el email
-            
-                aunque, el nombre, de la reserva, lo obtendre del login,
-
-            una vez que tengo el usuario, añado la reserva a su array de reservas
-            */
-            
 
             try {
 
@@ -223,16 +215,12 @@ const userController = {
         handleValidation,
 
         async (req, res , next) => {
-            const {id} = req.params;
+            const {email} = req.params;
 
-            /*
-                aqui debo obtener el correo desde el login
-            */
-            
             try {
-                console.log('id del controller' ,id);
+                console.log('id del controller' ,email);
 
-                const user = await(foundByEmail('luismi@gmail.com'));
+                const user = await(foundByEmail(email));
                 console.log('este es el user :',user);
 
                 if(!user){
@@ -266,12 +254,10 @@ const userController = {
 
         async (req, res ,next) => {
             const {name, diners, deposit, plates, date} = req.body;
-            const {id} = req.params;
-/*
-            console.log('reserveId del controller:', id);
-            console.log('datos llegando al req, controller: ', datosllegando);
-           */ try {
-                const user = await(foundByEmail('luismi@gmail.com'));
+            const {email} = req.params;
+            
+            try {
+                const user = await(foundByEmail(email));
                 console.log('este es el user :',user);
 
                 if(!user){
